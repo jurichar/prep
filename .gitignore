@@ -1,0 +1,27 @@
+# Fichiers de log
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Répertoire dans lequel les dépendances node sont stockées
+node_modules
+
+# Dossiers de build
+build/
+dist/
+
+# Environnement local
+.env
+.env.local
+
+# Fichiers IDE
+.idea/
+
+# Dossier de travail (tu l'utilises pour copier des exercices)
+/work/*

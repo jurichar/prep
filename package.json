@@ -1,0 +1,22 @@
+{
+  "name": "prep",
+  "version": "1.0.0",
+  "description": "Program for prepare technical tests",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jurichar/prep.git"
+  },
+  "author": "jurichar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jurichar/prep/issues"
+  },
+  "homepage": "https://github.com/jurichar/prep#readme",
+  "devDependencies": {
+    "jest": "^29.6.4"
+  }
+}
