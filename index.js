@@ -1,10 +1,13 @@
-const fs = require("fs");
-const { exec } = require("child_process");
+import fs from "fs";
+import { exec } from "child_process";
+import chalk from "chalk";
 
 let currentExercise = 0;
-let numberOfExercises = 1;
+let numberOfExercises = 2; // Adapte ce nombre selon le nombre réel d'exercices
+let score = 0;
 
 function startTraining() {
+  console.log(chalk.yellow("Commencement de l'entraînement !"));
   copyExercise(currentExercise);
 }
 
@@ -15,30 +18,40 @@ function copyExercise(exerciseNumber) {
   const dest = `./work/exercise_${exerciseNumber}.js`;
 
   fs.copyFileSync(src, dest);
-  console.log(`Exercice ${exerciseNumber} prêt à être résolu !`);
+  console.log(chalk.green(`Exercice ${exerciseNumber} prêt à être résolu !`));
 }
 
 function runTests() {
-  exec("npm test", (error, stdout, stderr) => {
-    console.log(stdout);
-    console.log(stderr);
+  const exerciseNumber = currentExercise.toString().padStart(2, "0");
+  exec(
+    `npm test src/tests/${exerciseNumber}_exercise.test.js`,
+    (error, stdout, stderr) => {
+      console.log(stdout);
+      console.log(stderr);
 
-    if (error) {
-      console.log(`Erreur : ${error.message}`);
-      return;
+      if (error) {
+        console.log(chalk.red(`Failed ! Retry`));
+        console.log(chalk.red(`Score : ${score}`));
+        return;
+      }
+
+      console.log(chalk.green("Le test a réussi !"));
+      score += 10; // Augmente le score de l'utilisateur
+      console.log(chalk.blue(`Votre score est maintenant de : ${score}`));
+      currentExercise += 1;
+
+      if (currentExercise >= numberOfExercises) {
+        console.log(
+          chalk.yellow("Bravo ! Vous avez complété tous les exercices.")
+        );
+        console.log(chalk.blue(`Score final : ${score}`));
+        process.exit(0); // Ferme le programme
+      } else {
+        copyExercise(currentExercise);
+        console.log(chalk.yellow("Passons à l'exercice suivant."));
+      }
     }
-
-    console.log("Tous les tests ont réussi !");
-    currentExercise += 1;
-
-    if (currentExercise >= numberOfExercises) {
-      console.log("Bravo ! Vous avez complété tous les exercices.");
-      process.exit(0); // Ferme le programme
-    } else {
-      copyExercise(currentExercise);
-      console.log("Passons à l'exercice suivant.");
-    }
-  });
+  );
 }
 
 // Gère les commandes de l'utilisateur
@@ -53,5 +66,7 @@ process.stdin.on("data", function (data) {
 });
 
 console.log(
-  "Entrez 'start' pour commencer l'entraînement, et 'test' pour tester votre solution."
+  chalk.cyan(
+    "Entrez 'start' pour commencer l'entraînement, et 'test' pour tester votre solution."
+  )
 );

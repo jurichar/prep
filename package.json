@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Program for prepare technical tests",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "jest"
   },
@@ -17,6 +18,11 @@
   },
   "homepage": "https://github.com/jurichar/prep#readme",
   "devDependencies": {
+    "@babel/preset-env": "^7.22.15",
+    "babel-jest": "^29.6.4",
     "jest": "^29.6.4"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0"
   }
 }

@@ -1,13 +1,20 @@
 /**
- * Fonction bubbleSort
+ * Tri à bulles
  *
- * Cette fonction prend un tableau de nombres en entrée et doit retourner
- * le tableau trié en ordre croissant en utilisant l'algorithme de tri à bulles.
+ * Dans cet exercice, vous devez implémenter l'algorithme de tri à bulles.
+ * Il fonctionne en répétant le balayage du tableau à trier, en comparant chaque paire d'éléments adjacents et en les inversant si nécessaire.
+ *
+ * Pseudo-code :
+ * Pour chaque élément dans le tableau
+ *   Si l'élément actuel est plus grand que l'élément suivant
+ *     Échanger les deux éléments
+ *   Fin Si
+ * Fin Pour
  *
  * @param {number[]} arr - Le tableau à trier
  * @returns {number[]} - Le tableau trié
  */
-module.exports = (arr) => {
-  // Votre code ici pour implémenter le tri à bulles
-  // N'oublie pas de retourner le tableau trié à la fin de la fonction
-};
+
+export default function bubbleSort(arr) {
+  // Votre code ici
+}
