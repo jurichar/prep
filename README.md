@@ -34,10 +34,14 @@ Pour commencer avec les exercices, suivez ces étapes :
     node index.js
     ```
 
-2. Tapez 'start' pour commencer l'entraînement. Le premier exercice sera copié dans le dossier 'work'.
+2. Tapez 'part n' (n = 1 à 7) ou 'all'.
 
-3. Ouvrez le fichier 'work/exercise.js' et commencez à résoudre l'exercice.
+3. Tapez 'start' pour commencer l'entraînement. Le premier exercice sera copié dans le dossier 'work'.
 
-4. Une fois que vous avez une solution, tapez 'test' dans la console pour exécuter les tests.
+4. Ouvrez le fichier 'work/exercise.js' et commencez à résoudre l'exercice.
 
-5. Si tous les tests réussissent, vous passerez à l'exercice suivant. Sinon, ajustez votre solution et testez à nouveau.
+5. Une fois que vous avez une solution, tapez 'test' dans la console pour exécuter les tests.
+
+6. Si tous les tests réussissent, vous passerez à l'exercice suivant. Sinon, ajustez votre solution et testez à nouveau.
+
+7. Vous pouvez aussi arreter la session avec 'exit', cela sauvegardera votre session dans le dossier archive.
