@@ -7,17 +7,17 @@ let numberOfExercises = 2; // Adapte ce nombre selon le nombre réel d'exercices
 let score = 0;
 
 const programParts = {
-  "part-1": { start: 0, end: 5, name: "Algorithmes de Tri" },
-  "part-2": { start: 6, end: 7, name: "Algorithmes de Recherche" },
-  "part-3": {
+  1: { start: 0, end: 5, name: "Algorithmes de Tri" },
+  2: { start: 6, end: 7, name: "Algorithmes de Recherche" },
+  3: {
     start: 8,
     end: 10,
     name: "Algorithmes sur les Chaînes de Caractères",
   },
-  "part-4": { start: 11, end: 12, name: "Algorithmes sur les Arbres" },
-  "part-5": { start: 13, end: 14, name: "Algorithmes sur les Graphes" },
-  "part-6": { start: 15, end: 16, name: "Algorithmes de Backtracking" },
-  "part-7": { start: 17, end: 19, name: "Algorithmes Dynamiques" },
+  4: { start: 11, end: 12, name: "Algorithmes sur les Arbres" },
+  5: { start: 13, end: 14, name: "Algorithmes sur les Graphes" },
+  6: { start: 15, end: 16, name: "Algorithmes de Backtracking" },
+  7: { start: 17, end: 19, name: "Algorithmes Dynamiques" },
   all: { start: 0, end: 19, name: "All part" },
 };
 
@@ -55,8 +55,10 @@ function runTests() {
   exec(
     `npm test src/tests/${exerciseNumber}_exercise.test.js`,
     (error, stdout, stderr) => {
-      console.log(stdout);
-      console.log(stderr);
+      console.log(chalk.green(stdout));
+      if (stderr) {
+        logError(stderr);
+      }
 
       if (error) {
         console.log(chalk.red(`Failed ! Retry`));
@@ -83,22 +85,42 @@ function runTests() {
   );
 }
 
+function logError(message) {
+  const date = new Date().toISOString();
+  const logMessage = `${date} - ${message}\n`;
+
+  const logDir = "./logs";
+  const logFile = "./logs/error.log";
+
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir);
+  }
+
+  fs.appendFileSync(logFile, logMessage);
+}
 // Gère les commandes de l'utilisateur
 process.stdin.on("data", function (data) {
   const command = data.toString().trim();
 
-  if (command.startsWith("select ")) {
+  if (command.startsWith("part") || command.startsWith("p")) {
     const part = command.split(" ")[1];
     selectPart(part);
-  } else if (command === "start") {
+  } else if (command === "start" || command.startsWith("s")) {
     startTraining();
-  } else if (command === "test") {
+  } else if (command === "test" || command.startsWith("t")) {
     runTests();
+  } else if (command === "log" || command.startsWith("l")) {
+    displayLastLog();
   }
 });
 
+function displayLastLog() {
+  const logData = fs.readFileSync("./logs/error.log", "utf-8");
+  console.log(chalk.red(logData));
+}
+
 console.log(
   chalk.cyan(
-    "Entrez 'select part-n' pour choisir une partie\n('n': [1 - 7] | 'all')\n- 'start' pour commencer l'entraînement\n- 'test' pour tester votre solution."
+    "Entrez 'part n' pour choisir une partie\n('n': [1 - 7] | 'all')\n- 'start' pour commencer l'entraînement\n- 'test' pour tester votre solution."
   )
 );
