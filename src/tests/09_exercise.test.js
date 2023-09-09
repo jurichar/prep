@@ -1,4 +1,4 @@
-import firstNonRepeatingChar from "../../work/exercise";
+import firstNonRepeatingChar from "../../work/exercise_9";
 
 test("firstNonRepeatingChar devrait retourner le premier caractère non répété", () => {
   // Test avec une chaîne normale

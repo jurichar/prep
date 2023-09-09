@@ -1,4 +1,4 @@
-import breadthFirstSearch from "../../work/exercise";
+import breadthFirstSearch from "../../work/exercise_12";
 
 test("breadthFirstSearch devrait retourner le parcours en largeur", () => {
   let graph = { 0: [1, 2], 1: [2], 2: [0, 3], 3: [3] };

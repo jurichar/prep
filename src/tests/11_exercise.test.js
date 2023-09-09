@@ -1,4 +1,4 @@
-import depthFirstSearch from "../../work/exercise";
+import depthFirstSearch from "../../work/exercise_11";
 
 test("depthFirstSearch devrait retourner le parcours en profondeur", () => {
   let graph = { 0: [1, 2], 1: [2], 2: [0, 3], 3: [3] };

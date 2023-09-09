@@ -1,4 +1,4 @@
-import dijkstra from "../../work/exercise";
+import dijkstra from "../../work/exercise_13";
 
 test("dijkstra devrait retourner le chemin le plus court", () => {
   let graph = { a: { b: 1, c: 4 }, b: { c: 2, d: 5 }, c: { d: 3 }, d: {} };

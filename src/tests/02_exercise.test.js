@@ -1,4 +1,4 @@
-import selectSort from "../../work/exercise";
+import selectSort from "../../work/exercise_2";
 
 test("Tri 3 devrait retourner un tableau trié", () => {
   // Test avec un tableau non trié

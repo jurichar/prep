@@ -1,4 +1,4 @@
-import fibMemoization from "../../work/exercise";
+import fibMemoization from "../../work/exercise_18";
 
 test("fibMemoization devrait retourner le bon nombre de Fibonacci", () => {
   // Test avec des petites valeurs

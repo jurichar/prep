@@ -1,4 +1,4 @@
-import nQueens from "../../work/exercise";
+import nQueens from "../../work/exercise_15";
 
 test("nQueens devrait retourner toutes les solutions possibles", () => {
   // Test avec un petit échiquier

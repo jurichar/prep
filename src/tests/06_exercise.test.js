@@ -1,4 +1,4 @@
-import linearSearch from "../../work/exercise";
+import linearSearch from "../../work/exercise_6";
 
 test("linearSearch devrait retourner l'index de l'élément recherché", () => {
   // Test avec un élément présent dans le tableau

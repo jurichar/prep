@@ -1,4 +1,4 @@
-import heapSort from "../../work/exercise";
+import heapSort from "../../work/exercise_5";
 
 test("Tri 6 devrait retourner un tableau trié", () => {
   // Test avec un tableau non trié

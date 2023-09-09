@@ -1,4 +1,4 @@
-import quickSort from "../../work/exercise";
+import quickSort from "../../work/exercise_4";
 
 test("Tri 5 devrait retourner un tableau trié", () => {
   // Test avec un tableau non trié

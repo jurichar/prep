@@ -1,4 +1,4 @@
-import knapsack from "../../work/exercise";
+import knapsack from "../../work/exercise_17";
 
 test("knapsack devrait retourner la valeur maximale pouvant être emportée", () => {
   // Test avec un sac à dos normal

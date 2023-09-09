@@ -1,4 +1,4 @@
-import insertionSort from "../../work/exercise";
+import insertionSort from "../../work/exercise_1";
 
 test("Tri 2 devrait retourner un tableau trié", () => {
   // Test avec un tableau non trié

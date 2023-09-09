@@ -1,4 +1,4 @@
-import binarySearch from "../../work/exercise";
+import binarySearch from "../../work/exercise_7";
 
 test("binarySearch devrait retourner l'index de l'élément recherché", () => {
   // Test avec un élément présent dans le tableau

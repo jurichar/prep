@@ -1,4 +1,4 @@
-import fusionSort from "../../work/exercise";
+import fusionSort from "../../work/exercise_3";
 
 test("Tri 4 devrait retourner un tableau trié", () => {
   // Test avec un tableau non trié

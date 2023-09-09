@@ -1,4 +1,4 @@
-import longestCommonSubsequence from "../../work/exercise";
+import longestCommonSubsequence from "../../work/exercise_19";
 
 test("longestCommonSubsequence devrait retourner le plus long sous-ensemble commun", () => {
   // Test avec deux chaînes non vides

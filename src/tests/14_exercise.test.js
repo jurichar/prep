@@ -1,4 +1,4 @@
-import kruskal from "../../work/exercise";
+import kruskal from "../../work/exercise_14";
 
 test("kruskal devrait retourner l'arbre couvrant minimal", () => {
   let graph = {

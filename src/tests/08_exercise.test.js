@@ -1,4 +1,4 @@
-import stringReverse from "../../work/exercise";
+import stringReverse from "../../work/exercise_8";
 
 test("stringReverse devrait retourner la chaîne inversée", () => {
   // Test avec une chaîne normale

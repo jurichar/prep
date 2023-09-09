@@ -1,4 +1,4 @@
-import charCount from "../../work/exercise";
+import charCount from "../../work/exercise_10";
 
 test("charCount devrait retourner le nombre d'occurrences d'un caractère", () => {
   // Test avec une chaîne normale

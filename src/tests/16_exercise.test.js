@@ -1,4 +1,4 @@
-import generateCombinations from "../../work/exercise";
+import generateCombinations from "../../work/exercise_16";
 
 test("generateCombinations devrait générer toutes les combinaisons possibles", () => {
   // Test avec un petit ensemble de données
