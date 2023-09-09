@@ -6,6 +6,21 @@ let currentExercise = 0;
 let numberOfExercises = 2; // Adapte ce nombre selon le nombre réel d'exercices
 let score = 0;
 
+const programParts = {
+  "part-1": { start: 0, end: 5, name: "Algorithmes de Tri" },
+  "part-2": { start: 6, end: 7, name: "Algorithmes de Recherche" },
+  "part-3": {
+    start: 8,
+    end: 10,
+    name: "Algorithmes sur les Chaînes de Caractères",
+  },
+  "part-4": { start: 11, end: 12, name: "Algorithmes sur les Arbres" },
+  "part-5": { start: 13, end: 14, name: "Algorithmes sur les Graphes" },
+  "part-6": { start: 15, end: 16, name: "Algorithmes de Backtracking" },
+  "part-7": { start: 17, end: 19, name: "Algorithmes Dynamiques" },
+  all: { start: 0, end: 19, name: "All part" },
+};
+
 function startTraining() {
   console.log(chalk.yellow("Commencement de l'entraînement !"));
   copyExercise(currentExercise);
@@ -19,6 +34,20 @@ function copyExercise(exerciseNumber) {
 
   fs.copyFileSync(src, dest);
   console.log(chalk.green(`Exercice ${exerciseNumber} prêt à être résolu !`));
+}
+
+function selectPart(part) {
+  if (programParts[part]) {
+    currentExercise = programParts[part].start;
+    numberOfExercises = programParts[part].end + 1;
+    console.log(
+      chalk.green(
+        `Vous avez sélectionné la ${part}, ${programParts[part].name} avec des exercices de ${currentExercise} à ${programParts[part].end}`
+      )
+    );
+  } else {
+    console.log(chalk.red(`La partie ${part} n'existe pas !`));
+  }
 }
 
 function runTests() {
@@ -58,7 +87,10 @@ function runTests() {
 process.stdin.on("data", function (data) {
   const command = data.toString().trim();
 
-  if (command === "start") {
+  if (command.startsWith("select ")) {
+    const part = command.split(" ")[1];
+    selectPart(part);
+  } else if (command === "start") {
     startTraining();
   } else if (command === "test") {
     runTests();
@@ -67,6 +99,6 @@ process.stdin.on("data", function (data) {
 
 console.log(
   chalk.cyan(
-    "Entrez 'start' pour commencer l'entraînement, et 'test' pour tester votre solution."
+    "Entrez 'select part-n' pour choisir une partie\n('n': [1 - 7] | 'all')\n- 'start' pour commencer l'entraînement\n- 'test' pour tester votre solution."
   )
 );
