@@ -5,10 +5,7 @@
  * C'est un algorithme de tri par comparaison basé sur le principe diviser pour régner.
  *
  * Pseudo-code :
- * Si le tableau a un ou zéro élément, il est déjà trié (cas de base)
- * Sinon, diviser le tableau en deux moitiés
- * Trier chaque moitié récursivement
- * Fusionner les deux moitiés triées
+
  *
  * @param {number[]} arr - Le tableau à trier
  * @returns {number[]} - Le tableau trié

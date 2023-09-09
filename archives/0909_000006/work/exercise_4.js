@@ -18,11 +18,31 @@ fonction tri_rapide(liste)
     
     retourner tri_rapide(liste_gauche) + [pivot] + tri_rapide(liste_droite)
 fin fonction
-    
+  
  *
  * @param {number[]} arr - Le tableau à trier
  * @returns {number[]} - Le tableau trié
  */
+
 export default function quickSort(arr) {
-  // Votre code ici
+  if (arr.length <= 1) {
+    return arr;
+  }
+
+  let pivot = arr[0];
+  let left = [];
+  let right = [];
+
+  arr.slice(1).forEach((element) => {
+    if (element <= pivot) {
+      left.push(element);
+    } else {
+      right.push(element);
+    }
+  });
+
+  console.log(left);
+  console.log(right);
+
+  return quickSort(left).concat([pivot], quickSort(right));
 }

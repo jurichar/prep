@@ -3,8 +3,11 @@ import { exec } from "child_process";
 import chalk from "chalk";
 
 let currentExercise = 0;
-let numberOfExercises = 2; // Adapte ce nombre selon le nombre réel d'exercices
+let numberOfExercises = 0;
 let score = 0;
+let chronoStart;
+let selectedPartName;
+let selectedPartNumber;
 
 const programParts = {
   1: { start: 0, end: 5, name: "Algorithmes de Tri" },
@@ -21,8 +24,11 @@ const programParts = {
   all: { start: 0, end: 19, name: "All part" },
 };
 
+const logDir = "./logs";
+
 function startTraining() {
   console.log(chalk.yellow("Commencement de l'entraînement !"));
+  chronoStart = Date.now();
   copyExercise(currentExercise);
 }
 
@@ -40,6 +46,8 @@ function selectPart(part) {
   if (programParts[part]) {
     currentExercise = programParts[part].start;
     numberOfExercises = programParts[part].end + 1;
+    selectedPartName = programParts[part].name;
+    selectedPartNumber = part;
     console.log(
       chalk.green(
         `Vous avez sélectionné la ${part}, ${programParts[part].name} avec des exercices de ${currentExercise} à ${programParts[part].end}`
@@ -76,7 +84,13 @@ function runTests() {
           chalk.yellow("Bravo ! Vous avez complété tous les exercices.")
         );
         console.log(chalk.blue(`Score final : ${score}`));
+        clean();
         process.exit(0); // Ferme le programme
+        //   scoreFilePath,
+        //   `${date} ${time}, ${duration} mins, Partie : ${selectedPart}, Score : ${score}\n`
+        // );
+
+        // process.exit(0); // Ferme le programme
       } else {
         copyExercise(currentExercise);
         console.log(chalk.yellow("Passons à l'exercice suivant."));
@@ -86,18 +100,36 @@ function runTests() {
 }
 
 function logError(message) {
-  const date = new Date().toISOString();
-  const logMessage = `${date} - ${message}\n`;
+  const date = new Date();
+  const formattedDate = date
+    .toISOString()
+    .split("T")[0]
+    .replace(/-/g, "")
+    .slice(4);
+  const time = date.toTimeString().split(" ")[0].replace(/:/g, "");
 
-  const logDir = "./logs";
-  const logFile = "./logs/error.log";
+  const logFile = `${logDir}/error_${formattedDate}_${time}.log`;
 
   if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir);
   }
 
-  fs.appendFileSync(logFile, logMessage);
+  fs.appendFileSync(logFile, message + "\n");
 }
+
+function initializeLogDirectory() {
+  if (fs.existsSync(logDir)) {
+    fs.rmSync(logDir, { recursive: true }); // Suppression du dossier de logs existant
+  }
+  fs.mkdirSync(logDir); // Création d'un nouveau dossier de logs
+
+  // // Initialisation d'un nouveau fichier log pour la session en cours
+  // const date = new Date();
+  // const formattedDate = date.toISOString().split("T")[0];
+  // const logFile = `${logDir}/error[${formattedDate}].log`;
+  // fs.writeFileSync(logFile, "");
+}
+
 // Gère les commandes de l'utilisateur
 process.stdin.on("data", function (data) {
   const command = data.toString().trim();
@@ -105,18 +137,73 @@ process.stdin.on("data", function (data) {
   if (command.startsWith("part") || command.startsWith("p")) {
     const part = command.split(" ")[1];
     selectPart(part);
-  } else if (command === "start" || command.startsWith("s")) {
+  } else if (command.startsWith("start") || command.startsWith("s")) {
     startTraining();
-  } else if (command === "test" || command.startsWith("t")) {
+  } else if (command.startsWith("test") || command.startsWith("t")) {
     runTests();
-  } else if (command === "log" || command.startsWith("l")) {
+  } else if (command.startsWith("log") || command.startsWith("l")) {
     displayLastLog();
+  } else if (command.startsWith("exit")) {
+    clean();
+    process.exit(0);
   }
 });
 
+function getLatestLogFilePath() {
+  const files = fs.readdirSync(logDir);
+  const latestFile = files
+    .map((file) => ({ file, mtime: fs.statSync(`${logDir}/${file}`).mtime }))
+    .sort((a, b) => b.mtime - a.mtime)[0].file;
+
+  return `${logDir}/${latestFile}`;
+}
+
+function clean() {
+  const date = new Date();
+  const formattedDate = date
+    .toISOString()
+    .split("T")[0]
+    .replace(/-/g, "")
+    .slice(4);
+  const time = date.toTimeString().split(" ")[0].replace(/:/g, "");
+  const sessionID = `${formattedDate}_${time}`;
+  const duration = Math.round((Date.now() - chronoStart) / 60000);
+
+  // Création du dossier d'archive pour la session actuelle
+  const sessionDir = `./archives/${sessionID}`;
+  if (!fs.existsSync("./archives")) {
+    fs.mkdirSync("./archives");
+  }
+  fs.mkdirSync(sessionDir);
+  fs.mkdirSync(`${sessionDir}/work`);
+  fs.mkdirSync(`${sessionDir}/logs`);
+
+  // Déplacement des fichiers de travail et de logs
+  fs.renameSync("./work", `${sessionDir}/work`);
+  fs.renameSync(logDir, `${sessionDir}/logs`);
+
+  // Ajout du score à fichier des scores
+  const scoreFile = "./scores.txt";
+
+  fs.appendFileSync(
+    scoreFile,
+    `${sessionID}, part ${selectedPartNumber}: ${selectedPartName} - score: ${score} in ${duration}mns\n`
+  );
+
+  // Création de nouveaux dossiers de travail et de logs pour la session suivante
+  fs.mkdirSync("./work");
+  initializeLogDirectory();
+
+  console.log(
+    chalk.yellow(
+      `La session a été nettoyée et archivée sous l'ID de session : ${sessionID}`
+    )
+  );
+}
+
 function displayLastLog() {
-  const logData = fs.readFileSync("./logs/error.log", "utf-8");
-  console.log(chalk.red(logData));
+  const logData = fs.readFileSync(getLatestLogFilePath(), "utf-8");
+  console.log(logData);
 }
 
 console.log(
