@@ -1,6 +1,8 @@
 # Fichiers de log
 logs/*
 archives/*
+work/*
+
 *.log
 npm-debug.log*
 
@@ -25,7 +27,6 @@ dist/
 .idea/
 
 # Dossier de travail (tu l'utilises pour copier des exercices)
-/work/*
 
 /archives/*
 /archives/**
