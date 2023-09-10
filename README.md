@@ -63,3 +63,27 @@ Pour commencer avec les exercices, suivez ces étapes :
 6. Algorithmes de Backtracking
 
 7. Algorithmes Dynamiques
+
+## Contributing
+
+Les contributions sont ce qui fait de la communauté open source un endroit incroyable pour apprendre, inspirer et créer. Toute contribution que vous apportez est **grandement appréciée**.
+
+Vous pouvez aussi ajouter votre score à la liste des scores dans le fichier 'scores.txt' !
+
+1. Fork le projet
+
+2. Créez votre Feature Branch (`git checkout -b feature/AmazingFeature`)
+
+3. Commit vos changements (`git commit -m 'Add some AmazingFeature'`)
+
+4. Push sur la branche (`git push origin feature/AmazingFeature`)
+
+5. Ouvrez une Pull Request
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## Contact
+
+- [LinkedIn](https://www.linkedin.com/in/julien_rchd/)
