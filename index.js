@@ -117,17 +117,16 @@ function logError(message) {
   fs.appendFileSync(logFile, message + "\n");
 }
 
-function initializeLogDirectory() {
+function initializeDirectory() {
   if (fs.existsSync(logDir)) {
     fs.rmSync(logDir, { recursive: true }); // Suppression du dossier de logs existant
   }
   fs.mkdirSync(logDir); // Création d'un nouveau dossier de logs
 
-  // // Initialisation d'un nouveau fichier log pour la session en cours
-  // const date = new Date();
-  // const formattedDate = date.toISOString().split("T")[0];
-  // const logFile = `${logDir}/error[${formattedDate}].log`;
-  // fs.writeFileSync(logFile, "");
+  if (fs.existsSync("./work")) {
+    fs.rmSync("./work", { recursive: true }); // Suppression du dossier de travail existant
+  }
+  fs.mkdirSync("./work"); // Création d'un nouveau dossier de travail
 }
 
 // Gère les commandes de l'utilisateur
@@ -191,8 +190,7 @@ function clean() {
   );
 
   // Création de nouveaux dossiers de travail et de logs pour la session suivante
-  fs.mkdirSync("./work");
-  initializeLogDirectory();
+  initializeDirectory();
 
   console.log(
     chalk.yellow(
