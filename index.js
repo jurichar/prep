@@ -1,6 +1,7 @@
 import fs from "fs";
-import { exec } from "child_process";
 import chalk from "chalk";
+import { promisify } from "util";
+import { exec } from "child_process";
 
 let currentExercise = 0;
 let numberOfExercises = 0;
@@ -8,6 +9,10 @@ let score = 0;
 let chronoStart;
 let selectedPartName;
 let selectedPartNumber;
+let currentStage = "init";
+
+const logDir = "./logs";
+const execAsync = promisify(exec);
 
 const programParts = {
   1: { start: 0, end: 5, name: "Algorithmes de Tri" },
@@ -24,7 +29,85 @@ const programParts = {
   all: { start: 0, end: 19, name: "All part" },
 };
 
-const logDir = "./logs";
+function displayInstructions() {
+  if (currentStage === "init") {
+    console.log(
+      chalk.cyan(
+        "Choisissez une commande : part [1 - 7] / part all / exit / score"
+      )
+    );
+  } else if (currentStage === "partSelected") {
+    chalk.cyan(console.log("Choisissez une commande : back / start / exit"));
+  } else if (currentStage === "inExercise") {
+    chalk.cyan(console.log("Choisissez une commande : test / exit / log"));
+  }
+}
+
+function getInput() {
+  return new Promise((resolve) => {
+    process.stdin.on("data", (data) => {
+      resolve(data.toString().trim());
+    });
+  });
+}
+
+function handleInitCommands(command) {
+  if (command.startsWith("part")) {
+    const part = command.split(" ")[1];
+    selectPart(part);
+  } else if (command.startsWith("exit")) {
+    clean();
+    process.exit(0);
+  } else if (command.startsWith("score")) {
+    console.log("score");
+  }
+}
+
+function handlePartSelectedCommands(command) {
+  if (command.startsWith("start") || command.startsWith("s")) {
+    startTraining();
+    currentStage = "inExercise";
+  } else if (command.startsWith("back") || command.startsWith("b")) {
+    currentStage = "init";
+  } else if (command.startsWith("exit")) {
+    clean();
+    process.exit(0);
+  }
+}
+
+async function handleInExerciseCommands(command) {
+  if (command.startsWith("test") || command.startsWith("t")) {
+    await runTests();
+  } else if (command.startsWith("log") || command.startsWith("l")) {
+    displayLastLog();
+  } else if (command.startsWith("exit")) {
+    clean();
+    process.exit(0);
+  }
+}
+
+async function main() {
+  console.log(
+    chalk.cyan("Bienvenue dans le programme d'entraînement aux algorithmes !")
+  );
+
+  initializeDirectory();
+  displayInstructions();
+
+  while (true) {
+    const command = await getInput();
+
+    if (currentStage === "init") {
+      handleInitCommands(command);
+    } else if (currentStage === "partSelected") {
+      handlePartSelectedCommands(command);
+    } else if (currentStage === "inExercise") {
+      await handleInExerciseCommands(command);
+    }
+
+    displayInstructions();
+  }
+}
 
 function startTraining() {
   console.log(chalk.yellow("Commencement de l'entraînement !"));
@@ -53,50 +136,46 @@ function selectPart(part) {
         `Vous avez sélectionné la ${part}, ${programParts[part].name} avec des exercices de ${currentExercise} à ${programParts[part].end}`
       )
     );
+    currentStage = "partSelected";
   } else {
     console.log(chalk.red(`La partie ${part} n'existe pas !`));
+    currentStage = "init";
   }
 }
 
-function runTests() {
+async function runTests() {
   const exerciseNumber = currentExercise.toString().padStart(2, "0");
-  exec(
-    `npm test src/tests/${exerciseNumber}_exercise.test.js`,
-    (error, stdout, stderr) => {
-      console.log(chalk.green(stdout));
-      if (stderr) {
-        logError(stderr);
-      }
 
-      if (error) {
-        console.log(chalk.red(`Failed ! Retry`));
-        console.log(chalk.red(`Score : ${score}`));
-        return;
-      }
+  try {
+    const { stdout, stderr } = await execAsync(
+      `npm test src/tests/${exerciseNumber}_exercise.test.js`
+    );
 
-      console.log(chalk.green("Le test a réussi !"));
-      score += 10; // Augmente le score de l'utilisateur
-      console.log(chalk.blue(`Votre score est maintenant de : ${score}`));
-      currentExercise += 1;
-
-      if (currentExercise >= numberOfExercises) {
-        console.log(
-          chalk.yellow("Bravo ! Vous avez complété tous les exercices.")
-        );
-        console.log(chalk.blue(`Score final : ${score}`));
-        clean();
-        process.exit(0); // Ferme le programme
-        //   scoreFilePath,
-        //   `${date} ${time}, ${duration} mins, Partie : ${selectedPart}, Score : ${score}\n`
-        // );
-
-        // process.exit(0); // Ferme le programme
-      } else {
-        copyExercise(currentExercise);
-        console.log(chalk.yellow("Passons à l'exercice suivant."));
-      }
+    console.log(chalk.green(stdout));
+    if (stderr) {
+      logError(stderr);
     }
-  );
+
+    console.log(chalk.green("Le test a réussi !"));
+    score += 10; // Augmente le score de l'utilisateur
+    console.log(chalk.blue(`Votre score est maintenant de : ${score}`));
+    currentExercise += 1;
+
+    if (currentExercise >= numberOfExercises) {
+      console.log(
+        chalk.yellow("Bravo ! Vous avez complété tous les exercices.")
+      );
+      console.log(chalk.blue(`Score final : ${score}`));
+      clean();
+      currentStage = "init";
+    } else {
+      console.log(chalk.yellow("Passons à l'exercice suivant."));
+      copyExercise(currentExercise);
+    }
+  } catch (error) {
+    console.log(chalk.red(`Failed ! Retry`));
+    console.log(chalk.red(`Score : ${score}`));
+  }
 }
 
 function logError(message) {
@@ -129,27 +208,14 @@ function initializeDirectory() {
   fs.mkdirSync("./work"); // Création d'un nouveau dossier de travail
 }
 
-// Gère les commandes de l'utilisateur
-process.stdin.on("data", function (data) {
-  const command = data.toString().trim();
-
-  if (command.startsWith("part") || command.startsWith("p")) {
-    const part = command.split(" ")[1];
-    selectPart(part);
-  } else if (command.startsWith("start") || command.startsWith("s")) {
-    startTraining();
-  } else if (command.startsWith("test") || command.startsWith("t")) {
-    runTests();
-  } else if (command.startsWith("log") || command.startsWith("l")) {
-    displayLastLog();
-  } else if (command.startsWith("exit")) {
-    clean();
-    process.exit(0);
-  }
-});
-
 function getLatestLogFilePath() {
   const files = fs.readdirSync(logDir);
+
+  if (files.length === 0) {
+    console.log(chalk.red("Aucun fichier de log trouvé."));
+    return;
+  }
+
   const latestFile = files
     .map((file) => ({ file, mtime: fs.statSync(`${logDir}/${file}`).mtime }))
     .sort((a, b) => b.mtime - a.mtime)[0].file;
@@ -200,12 +266,12 @@ function clean() {
 }
 
 function displayLastLog() {
-  const logData = fs.readFileSync(getLatestLogFilePath(), "utf-8");
+  let logFile = getLatestLogFilePath();
+  if (!logFile) {
+    return;
+  }
+  const logData = fs.readFileSync(logFile, "utf-8");
   console.log(logData);
 }
 
-console.log(
-  chalk.cyan(
-    "Entrez 'part n' pour choisir une partie\n('n': [1 - 7] | 'all')\n- 'start' pour commencer l'entraînement\n- 'test' pour tester votre solution."
-  )
-);
+main();
