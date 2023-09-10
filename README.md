@@ -47,3 +47,19 @@ Pour commencer avec les exercices, suivez ces étapes :
 7. Si tous les tests réussissent, vous passerez à l'exercice suivant. Sinon, ajustez votre solution et testez à nouveau.
 
 8. Vous pouvez aussi arreter la session avec 'exit', cela sauvegardera votre session dans le dossier archive.
+
+## Part to work
+
+1. Algorithmes de Tri
+
+2. Algorithmes de Recherche
+
+3. Algorithmes sur les Chaînes de Caractères
+
+4. Algorithmes sur les Arbres
+
+5. Algorithmes sur les Graphes
+
+6. Algorithmes de Backtracking
+
+7. Algorithmes Dynamiques

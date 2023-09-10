@@ -14,6 +14,7 @@
  * @param {string} str - La chaîne
  * @returns {string|null} - Le premier caractère non répété ou null si tous sont répétés
  */
-export default function firstNonRepeatingChar(arr) {
+
+export default function firstNonRepeatingChar(str) {
   // Votre code ici
 }

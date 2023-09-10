@@ -1,3 +1,1 @@
-0909_000006, part 1: Algorithmes de Tri - score: 60 in 1mns
-0909_001556, part 1: Algorithmes de Tri - score: 0 in 0mns
 0909_005003, part 1: Algorithmes de Tri - score: 60 in 15mns
