@@ -2,6 +2,8 @@ import fs from "fs";
 import chalk from "chalk";
 import { promisify } from "util";
 import { exec } from "child_process";
+import inquirer from "inquirer";
+import { exit } from "process";
 
 let currentExercise = 0;
 let numberOfExercises = 0;
@@ -29,90 +31,123 @@ const programParts = {
   all: { start: 0, end: 19, name: "All part" },
 };
 
-function displayInstructions() {
-  if (currentStage === "init") {
-    console.log(
-      chalk.cyan(
-        "Choisissez une commande : part [1 - 7] / part all / exit / score"
-      )
-    );
-  } else if (currentStage === "partSelected") {
-    chalk.cyan(console.log("Choisissez une commande : back / start / exit"));
-  } else if (currentStage === "inExercise") {
-    chalk.cyan(console.log("Choisissez une commande : test / exit / log"));
-  }
-}
-
-function getInput() {
-  return new Promise((resolve) => {
-    process.stdin.on("data", (data) => {
-      resolve(data.toString().trim());
-    });
-  });
-}
-
-function handleInitCommands(command) {
-  if (command.startsWith("part")) {
-    const part = command.split(" ")[1];
-    selectPart(part);
-  } else if (command.startsWith("exit")) {
-    clean();
-    process.exit(0);
-  } else if (command.startsWith("score")) {
-    console.log("score");
-  }
-}
-
-function handlePartSelectedCommands(command) {
-  if (command.startsWith("start") || command.startsWith("s")) {
-    startTraining();
-    currentStage = "inExercise";
-  } else if (command.startsWith("back") || command.startsWith("b")) {
-    currentStage = "init";
-  } else if (command.startsWith("exit")) {
-    clean();
-    process.exit(0);
-  }
-}
-
-async function handleInExerciseCommands(command) {
-  if (command.startsWith("test") || command.startsWith("t")) {
-    await runTests();
-  } else if (command.startsWith("log") || command.startsWith("l")) {
-    displayLastLog();
-  } else if (command.startsWith("exit")) {
-    clean();
-    process.exit(0);
-  }
-}
-
 async function main() {
   console.log(
     chalk.cyan("Bienvenue dans le programme d'entraînement aux algorithmes !")
   );
 
   initializeDirectory();
-  displayInstructions();
 
   while (true) {
-    const command = await getInput();
-
+    console.log(chalk.blue(currentStage));
     if (currentStage === "init") {
-      handleInitCommands(command);
+      await displayInitMenu();
+    } else if (currentStage === "partSelect") {
+      await displayPartMenu();
     } else if (currentStage === "partSelected") {
-      handlePartSelectedCommands(command);
+      await displaySelectPartMenu();
     } else if (currentStage === "inExercise") {
-      await handleInExerciseCommands(command);
+      await displayExerciseMenu();
+    } else if (currentStage === "inExerciseStarted") {
+      await displayExerciseStartedMenu();
+    } else {
+      console.log(chalk.red("Erreur : état inconnu : ", currentStage));
+      exit(1);
     }
-
-    displayInstructions();
   }
 }
 
-function startTraining() {
+async function displayInitMenu() {
+  const { choice } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "choice",
+      message: "Choisissez une commande :",
+      choices: ["part", "exit", "score"],
+    },
+  ]);
+
+  if (choice === "part") {
+    currentStage = "partSelect";
+  } else if (choice === "exit") {
+    process.exit(0);
+  } else if (choice === "score") {
+    displayScore();
+  }
+}
+
+async function displayPartMenu() {
+  const { choice } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "choice",
+      message: "Choisissez une partie :",
+      choices: [
+        ...Object.entries(programParts).map(([key, part]) => ({
+          name: part.name,
+          value: key,
+        })),
+        "back",
+        "exit",
+      ],
+    },
+  ]);
+
+  if (choice === "back") {
+    currentStage = "init";
+  } else if (choice === "exit") {
+    process.exit(0);
+  } else {
+    selectedPartNumber = choice;
+    currentStage = "partSelected";
+  }
+}
+
+async function displayExerciseMenu() {
+  const { choice } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "choice",
+      message: "Choisissez une action :",
+      choices: ["start", "back", "exit"],
+    },
+  ]);
+
+  if (choice === "start") {
+    currentStage = "inExerciseStarted";
+  } else if (choice === "back") {
+    currentStage = "partSelect";
+  } else if (choice === "exit") {
+    process.exit(0);
+  }
+}
+
+async function displayExerciseStartedMenu() {
   console.log(chalk.yellow("Commencement de l'entraînement !"));
   chronoStart = Date.now();
   copyExercise(currentExercise);
+
+  while (currentStage === "inExerciseStarted") {
+    const { choice } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "choice",
+        message: "Choisissez une action :",
+        choices: ["test", "log", "exit"],
+      },
+    ]);
+
+    if (choice === "test") {
+      console.log(chalk.yellow("Lancement du test..."));
+      await runTests();
+    } else if (choice === "log") {
+      displayLastLog();
+    } else if (choice === "exit") {
+      clean();
+      process.exit(0);
+    }
+    currentStage = "inExerciseStarted";
+  }
 }
 
 function copyExercise(exerciseNumber) {
@@ -125,7 +160,8 @@ function copyExercise(exerciseNumber) {
   console.log(chalk.green(`Exercice ${exerciseNumber} prêt à être résolu !`));
 }
 
-function selectPart(part) {
+async function displaySelectPartMenu() {
+  let part = selectedPartNumber;
   if (programParts[part]) {
     currentExercise = programParts[part].start;
     numberOfExercises = programParts[part].end + 1;
@@ -133,14 +169,15 @@ function selectPart(part) {
     selectedPartNumber = part;
     console.log(
       chalk.green(
-        `Vous avez sélectionné la ${part}, ${programParts[part].name} avec des exercices de ${currentExercise} à ${programParts[part].end}`
+        `Vous avez sélectionné la partie ${part}, ${programParts[part].name} avec des exercices de ${currentExercise} à ${programParts[part].end}`
       )
     );
-    currentStage = "partSelected";
+    currentStage = "inExercise";
   } else {
     console.log(chalk.red(`La partie ${part} n'existe pas !`));
-    currentStage = "init";
+    currentStage = "partSelect";
   }
+  return;
 }
 
 async function runTests() {
@@ -153,7 +190,7 @@ async function runTests() {
 
     console.log(chalk.green(stdout));
     if (stderr) {
-      logError(stderr);
+      await logError(stderr);
     }
 
     console.log(chalk.green("Le test a réussi !"));
@@ -173,12 +210,14 @@ async function runTests() {
       copyExercise(currentExercise);
     }
   } catch (error) {
+    await logError(error);
     console.log(chalk.red(`Failed ! Retry`));
     console.log(chalk.red(`Score : ${score}`));
   }
 }
 
-function logError(message) {
+async function logError(message) {
+  console.log(chalk.red("Une erreur est survenue :"));
   const date = new Date();
   const formattedDate = date
     .toISOString()
@@ -272,6 +311,18 @@ function displayLastLog() {
   }
   const logData = fs.readFileSync(logFile, "utf-8");
   console.log(logData);
+}
+
+function displayScore() {
+  let scoreFile = fs.existsSync("./scores.txt");
+  if (!scoreFile) {
+    console.log(chalk.red("Aucun fichier de score trouvé."));
+    return;
+  }
+  console.log(chalk.blue("Affichage du score"));
+
+  const scoreData = fs.readFileSync("./scores.txt", "utf-8");
+  console.log(scoreData);
 }
 
 main();
