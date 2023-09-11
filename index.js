@@ -3,7 +3,7 @@ import chalk from "chalk";
 import { promisify } from "util";
 import { exec } from "child_process";
 import inquirer from "inquirer";
-import { exit } from "process";
+import { exit, stdout } from "process";
 
 let currentExercise = 0;
 let numberOfExercises = 0;
@@ -182,11 +182,16 @@ async function displaySelectPartMenu() {
 
 async function runTests() {
   const exerciseNumber = currentExercise.toString().padStart(2, "0");
-
+  let stdout, stderr;
   try {
-    const { stdout, stderr } = await execAsync(
-      `npm test src/tests/${exerciseNumber}_exercise.test.js`
+    // ({ stdout, stderr } = await execAsync(
+    // `npm test src/tests/${exerciseNumber}_exercise.test.js 2>&1`
+    await execAsync(
+      `npm test src/tests/${exerciseNumber}_exercise.test.js > test_output.log`
     );
+
+    // ));
+    stdout = fs.readFileSync("test_output.log", "utf-8");
 
     console.log(chalk.green(stdout));
     if (stderr) {
@@ -211,8 +216,10 @@ async function runTests() {
     }
   } catch (error) {
     await logError(error);
+    stdout = fs.readFileSync("test_output.log", "utf-8");
     console.log(chalk.red(`Failed ! Retry`));
     console.log(chalk.red(`Score : ${score}`));
+    console.log(chalk.green(stdout));
   }
 }
 
