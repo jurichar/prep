@@ -28,6 +28,7 @@ const programParts = {
   5: { start: 13, end: 14, name: "Algorithmes sur les Graphes" },
   6: { start: 15, end: 16, name: "Algorithmes de Backtracking" },
   7: { start: 17, end: 19, name: "Algorithmes Dynamiques" },
+  8: { start: 20, end: 20, name: "Practices : Partie 1" },
   all: { start: 0, end: 19, name: "All part" },
 };
 
@@ -184,13 +185,10 @@ async function runTests() {
   const exerciseNumber = currentExercise.toString().padStart(2, "0");
   let stdout, stderr;
   try {
-    // ({ stdout, stderr } = await execAsync(
-    // `npm test src/tests/${exerciseNumber}_exercise.test.js 2>&1`
     await execAsync(
       `npm test src/tests/${exerciseNumber}_exercise.test.js > test_output.log`
     );
 
-    // ));
     stdout = fs.readFileSync("test_output.log", "utf-8");
 
     console.log(chalk.green(stdout));

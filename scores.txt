@@ -3,3 +3,4 @@
 0910_204921, part 3: Algorithmes sur les Chaînes de Caractères - score: 0 in 0mns
 0911_104130, part 1: Algorithmes de Tri - score: 0 in 3mns
 0911_112037, part 1: Algorithmes de Tri - score: 0 in 6mns
+0911_151659, part 8: Practices : Partie 1 - score: 0 in 0mns
