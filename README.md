@@ -48,6 +48,10 @@ Pour commencer avec les exercices, suivez ces étapes :
 
 8. Vous pouvez aussi arreter la session avec 'exit', cela sauvegardera votre session dans le dossier archive.
 
+## Screenshots
+
+![screenshot](./screenshot.gif)
+
 ## Part to work
 
 1. Algorithmes de Tri

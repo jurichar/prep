@@ -4,3 +4,5 @@
 0911_104130, part 1: Algorithmes de Tri - score: 0 in 3mns
 0911_112037, part 1: Algorithmes de Tri - score: 0 in 6mns
 0911_151659, part 8: Practices : Partie 1 - score: 0 in 0mns
+0914_115305, part 8: Practices : Partie 1 - score: 0 in 0mns
+0919_113423, part 1: Algorithmes de Tri - score: 0 in 0mns
